@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Budget Tracker Dashboard</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <style>
+    .overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.4);
+      z-index: 5;
+      display: none;
+    }
+
+    .overlay.active {
+      display: block;
+    }
+
+    .sidebar {
+      z-index: 10;
+    }
+  </style>
+</head>
+<body>
+  <div class="overlay"></div>
+
+  <div class="sidebar">
+    <h2>Budget Tracker</h2>
+    <ul>
+      <li class="active"><span class="material-icons">dashboard</span> Dashboard</li>
+      <li><span class="material-icons">account_balance_wallet</span> Transactions</li>
+      <li><span class="material-icons">bar_chart</span> Reports</li>
+      <li><span class="material-icons">settings</span> Settings</li>
+    </ul>
+  </div>
+
+  <div class="main-content">
+    <div class="header">
+      <button class="menu-toggle">
+        <span class="material-icons">menu</span>
+      </button>
+      <input type="text" placeholder="Search...">
+      <div class="user-info">
+        <span class="material-icons">notifications</span>
+        <span class="material-icons">account_circle</span>
+      </div>
+    </div>
+
+    <div class="cards">
+      <div class="card orange">
+        <h3>Income</h3>
+        <p>$2,500</p>
+      </div>
+      <div class="card green">
+        <h3>Expenses</h3>
+        <p>$1,340</p>
+      </div>
+      <div class="card red">
+        <h3>Savings</h3>
+        <p>$560</p>
+      </div>
+      <div class="card blue">
+        <h3>Goals</h3>
+        <p>3 Active</p>
+      </div>
+    </div>
+
+    <div class="content-row">
+      <div class="task-card">
+        <h4>Monthly Budget Completion</h4>
+        <div class="circle">75%</div>
+      </div>
+      <div class="map-card">
+        <h4>Spending by Region</h4>
+        <img src="map-placeholder.png" alt="Map">
+      </div>
+    </div>
+
+    <div class="balance-section">
+      <div class="balance-box">
+        <h4>Total Balance</h4>
+        <p>$3,018</p>
+      </div>
+      <div class="progress-box">
+        <p>Budget Used: 65%</p>
+        <div class="progress-bar">
+          <div class="filled"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const toggleBtn = document.querySelector('.menu-toggle');
+    const sidebar = document.querySelector('.sidebar');
+    const overlay = document.querySelector('.overlay');
+
+    toggleBtn.addEventListener('click', () => {
+      sidebar.classList.toggle('closed');
+      overlay.classList.toggle('active');
+    });
+
+    overlay.addEventListener('click', () => {
+      sidebar.classList.add('closed');
+      overlay.classList.remove('active');
+    });
+  </script>
+</body>
+</html>

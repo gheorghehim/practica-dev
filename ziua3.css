@@ -1,0 +1,85 @@
+body{
+  margin: 0;
+  font-family: Arial, sans-serif;
+}
+
+.sidebar{
+  width: 200px;
+  background-color: #333;
+  color: white;
+  height: 100vh;
+  padding: 20px;
+  float: left;
+}
+
+.header{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 20px;
+  background-color: #f5f5f5;
+  margin-left: 200px;
+}
+
+.search-bar{
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.search-bar input{
+  padding: 6px 10px;
+  border: 1px solid #ccc;
+  border-radius: 20px;
+}
+
+.search-bar button{
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.search-bar .material-icons{
+  font-size: 20px;
+  color: #333;
+}
+
+.main{
+  margin-left: 200px;
+  padding: 20px;
+}
+
+.cards{
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.card{
+  flex: 1;
+  min-width: 200px;
+  padding: 20px;
+  color: white;
+  border-radius: 8px;
+}
+
+.orange{ background-color: orange; }
+.green{ background-color: green; }
+.red{ background-color: red; }
+.blue{ background-color: blue; }
+
+.hidden{
+  display: none;
+}   
+.image-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 30px 0;
+}
+
+.image-container img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 10px;
+}

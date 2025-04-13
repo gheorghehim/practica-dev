@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Budget Tracker</title>
+  <link rel="stylesheet" href="ziua3.css">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+</head>
+<body>
+  <h1>Bugetul Tău</h1>
+
+<div class="image-container">
+  <img src="imaginea-ta.jpg" alt="Imagine buget" />
+</div>
+
+  <div class="sidebar" id="sidebar">
+    <h2>Dashboard</h2>
+  </div>
+
+  <div class="header">
+    <button class="menu-toggle" onclick="toggleSidebar()">
+      <span class="material-icons">menu</span>
+    </button>
+
+    <div class="search-bar">
+      <input type="text" placeholder="Caută...">
+      <button><span class="material-icons">search</span></button>
+    </div>
+  </div>
+
+  <div class="main">
+    <h1>Bugetul Tău</h1>
+
+
+    <div class="cards">
+      <div class="card orange">
+        <h3>Venit</h3>
+        <p>$2500</p>
+      </div>
+      <div class="card green">
+        <h3>Cheltuieli</h3>
+        <p>$1340</p>
+      </div>
+      <div class="card red">
+        <h3>Economii</h3>
+        <p>$560</p>
+      </div>
+      <div class="card blue">
+        <h3>Scopuri</h3>
+        <p>3 Scopuri</p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function toggleSidebar() {
+      const sidebar=document.getElementById('sidebar');
+      sidebar.classList.toggle('hidden');
+    }
+  </script>
+</body>
+</html>
