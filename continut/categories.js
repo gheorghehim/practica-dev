@@ -146,3 +146,121 @@ function deleteCategory(categoryId) {
     localStorage.setItem('categories', JSON.stringify(categories));
     loadCategories();
 } 
+
+document.addEventListener('DOMContentLoaded', () => {
+    const addCategoryForm = document.getElementById('addCategoryForm');
+    const incomeCategoryList = document.getElementById('incomeCategoryList');
+    const expenseCategoryList = document.getElementById('expenseCategoryList');
+
+    // Function to get categories from localStorage
+    function getCategories() {
+        return JSON.parse(localStorage.getItem('categories')) || [];
+    }
+
+    // Function to save categories to localStorage
+    function saveCategories(categories) {
+        localStorage.setItem('categories', JSON.stringify(categories));
+    }
+
+    // Function to render categories in the lists
+    function renderCategories() {
+        const categories = getCategories();
+        incomeCategoryList.innerHTML = ''; // Clear existing items
+        expenseCategoryList.innerHTML = ''; // Clear existing items
+
+        const incomeCategories = categories.filter(cat => cat.type === 'income');
+        const expenseCategories = categories.filter(cat => cat.type === 'expense');
+
+        if (incomeCategories.length === 0) {
+            incomeCategoryList.innerHTML = '<li><span>No income categories yet.</span></li>';
+        } else {
+            incomeCategories.forEach(cat => {
+                const li = document.createElement('li');
+                li.innerHTML = `<span>${cat.name}</span> <i class='bx bx-trash' data-name="${cat.name}" data-type="${cat.type}"></i>`; // Add delete icon
+                incomeCategoryList.appendChild(li);
+            });
+        }
+
+        if (expenseCategories.length === 0) {
+            expenseCategoryList.innerHTML = '<li><span>No expense categories yet.</span></li>';
+        } else {
+            expenseCategories.forEach(cat => {
+                const li = document.createElement('li');
+                li.innerHTML = `<span>${cat.name}</span> <i class='bx bx-trash' data-name="${cat.name}" data-type="${cat.type}"></i>`; // Add delete icon
+                expenseCategoryList.appendChild(li);
+            });
+        }
+        
+        // Add event listeners to delete icons
+        addDeleteEventListeners();
+    }
+
+    // Function to handle adding a new category
+    function handleAddCategory(event) {
+        event.preventDefault();
+        const categoryNameInput = document.getElementById('categoryName');
+        const categoryTypeSelect = document.getElementById('categoryType');
+        
+        const categoryName = categoryNameInput.value.trim();
+        const categoryType = categoryTypeSelect.value;
+
+        if (!categoryName) {
+            alert('Please enter a category name.');
+            return;
+        }
+
+        const categories = getCategories();
+
+        // Check if category already exists for the type
+        const exists = categories.some(cat => cat.name.toLowerCase() === categoryName.toLowerCase() && cat.type === categoryType);
+
+        if (exists) {
+            alert(`Category '${categoryName}' already exists for ${categoryType}.`);
+            return;
+        }
+
+        // Add the new category
+        categories.push({ name: categoryName, type: categoryType });
+        saveCategories(categories);
+
+        // Re-render the lists and clear the form
+        renderCategories();
+        categoryNameInput.value = ''; 
+        // showMessage('Category added successfully!', false); // Optional: Use showMessage like in transactions.js
+        alert('Category added successfully!'); // Simple feedback
+    }
+    
+    // Function to handle deleting a category
+    function handleDeleteCategory(event) {
+        if (event.target.classList.contains('bx-trash')) {
+            const categoryName = event.target.getAttribute('data-name');
+            const categoryType = event.target.getAttribute('data-type');
+            
+            if (confirm(`Are you sure you want to delete the category '${categoryName}' (${categoryType})?`)) {
+                let categories = getCategories();
+                categories = categories.filter(cat => !(cat.name === categoryName && cat.type === categoryType));
+                saveCategories(categories);
+                renderCategories();
+                alert('Category deleted.');
+            }
+        }
+    }
+    
+    // Function to add delete event listeners
+    function addDeleteEventListeners() {
+         const deleteIcons = document.querySelectorAll('.bx-trash');
+         deleteIcons.forEach(icon => {
+            // Remove existing listener before adding a new one to prevent duplicates
+            icon.removeEventListener('click', handleDeleteCategory);
+            icon.addEventListener('click', handleDeleteCategory);
+         });
+    }
+
+    // Initial rendering of categories
+    renderCategories();
+
+    // Add submit event listener to the form
+    if (addCategoryForm) {
+        addCategoryForm.addEventListener('submit', handleAddCategory);
+    }
+}); 
