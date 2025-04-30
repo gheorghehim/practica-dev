@@ -1,88 +1,43 @@
-// Initializeaza tranzactiile din localStorage sau creeaza un array gol
-let transactions = JSON.parse(localStorage.getItem('transactions') || '[]');
+// Initialize transactions from localStorage or create empty array
+let transactions = JSON.parse(localStorage.getItem('transactions')) || [];
 
-// Initializeaza categoriile initiale in localStorage daca nu exista
-const initialCategories = [
-    { name: 'Salary', type: 'income' },
-    { name: 'Donation', type: 'income' },
-    { name: 'Groceries', type: 'expense' },
-    { name: 'Presents', type: 'expense' },
-    { name: 'Bills', type: 'expense' },
+// Initialize categories from localStorage or create default ones
+let categories = JSON.parse(localStorage.getItem('categories')) || [
+    { name: 'Food', type: 'expense' },
     { name: 'Transport', type: 'expense' },
+    { name: 'Utilities', type: 'expense' },
     { name: 'Entertainment', type: 'expense' },
-    { name: 'Other', type: 'expense' },
-    { name: 'Other', type: 'income' }
+    { name: 'Salary', type: 'income' },
+    { name: 'Other', type: 'both' }
 ];
 
-// Functie pentru initializarea categoriilor in localStorage daca nu exista
-function initializeCategories() {
-    if (!localStorage.getItem('categories')) {
-        localStorage.setItem('categories', JSON.stringify(initialCategories));
-    }
+// Save categories to localStorage
+function saveCategories() {
+    localStorage.setItem('categories', JSON.stringify(categories));
 }
 
-// Functie pentru gestionarea tranzactiilor
-document.addEventListener('DOMContentLoaded', () => {
-    const transactionForm = document.getElementById('transactionForm');
-    const typeSelect = document.getElementById('type');
-    const categorySelect = document.getElementById('category');
-    
-    // Actualizeaza categoriile in functie de tipul tranzactiei
-    typeSelect.addEventListener('change', updateCategories);
-    
-    // Initializeaza categoriile
-    updateCategories();
-    
-    // Gestioneaza submitul formularului
-    transactionForm.addEventListener('submit', handleTransactionSubmit);
-    
-    // Seteaza data implicita la data curenta
-    document.getElementById('date').valueAsDate = new Date();
-});
-
-// Actualizeaza categoriile in functie de tipul tranzactiei
+// Update category dropdown based on transaction type
 function updateCategories() {
     const type = document.getElementById('type').value;
     const categorySelect = document.getElementById('category');
     
-    // Sterge optiunile existente
+    // Clear existing options
     categorySelect.innerHTML = '';
     
-    // Adauga categoriile corespunzatoare tipului
-    if (type === 'expense') {
-        addCategories([
-            { value: 'food', text: 'Food' },
-            { value: 'transport', text: 'Transport' },
-            { value: 'utilities', text: 'Utilities' },
-            { value: 'entertainment', text: 'Entertainment' },
-            { value: 'shopping', text: 'Shopping' },
-            { value: 'health', text: 'Health' },
-            { value: 'education', text: 'Education' },
-            { value: 'other', text: 'Other' }
-        ]);
-    } else {
-        addCategories([
-            { value: 'salary', text: 'Salary' },
-            { value: 'freelance', text: 'Freelance' },
-            { value: 'investments', text: 'Investments' },
-            { value: 'gifts', text: 'Gifts' },
-            { value: 'other', text: 'Other' }
-        ]);
-    }
-}
-
-// Functie pentru adaugarea categoriilor la selectare
-function addCategories(categories) {
-    const categorySelect = document.getElementById('category');
-    categories.forEach(category => {
+    // Filter and add categories based on type
+    const filteredCategories = categories.filter(cat => 
+        cat.type === type || cat.type === 'both'
+    );
+    
+    filteredCategories.forEach(category => {
         const option = document.createElement('option');
-        option.value = category.value;
-        option.textContent = category.text;
+        option.value = category.name.toLowerCase();
+        option.textContent = category.name;
         categorySelect.appendChild(option);
     });
 }
 
-// Gestioneaza submitul formularului
+// Handle form submission
 function handleTransactionSubmit(event) {
     event.preventDefault();
     
@@ -131,14 +86,13 @@ function handleTransactionSubmit(event) {
     }, 1500);
 }
 
-// Salveaza tranzactia in localStorage
+// Save transaction to localStorage
 function saveTransaction(transaction) {
-    let transactions = JSON.parse(localStorage.getItem('transactions')) || [];
     transactions.push(transaction);
     localStorage.setItem('transactions', JSON.stringify(transactions));
 }
 
-// Afiseaza mesajul de eroare
+// Show error message
 function showError(message) {
     const errorDiv = document.createElement('div');
     errorDiv.className = 'error-message';
@@ -157,7 +111,7 @@ function showError(message) {
     }, 3000);
 }
 
-// Afiseaza mesajul de succes
+// Show success message
 function showSuccess(message) {
     const successDiv = document.createElement('div');
     successDiv.className = 'success-message';
@@ -176,24 +130,25 @@ function showSuccess(message) {
     }, 3000);
 }
 
-function getTransactions() {
-    return JSON.parse(localStorage.getItem('transactions')) || [];
-}
-
-// Functie pentru afisarea mesajelor
-function showMessage(message, isError = true) {
-    const messageDiv = document.createElement('div');
-    messageDiv.className = isError ? 'error-message' : 'success-message';
-    messageDiv.textContent = message;
+// Initialize the form when the page loads
+document.addEventListener('DOMContentLoaded', () => {
+    const transactionForm = document.getElementById('transactionForm');
+    const typeSelect = document.getElementById('type');
     
-    const form = document.getElementById('transactionForm');
-    if (form && form.parentNode) {
-        form.parentNode.insertBefore(messageDiv, form);
-    } else {
-        document.body.appendChild(messageDiv);
-    }
+    // Set up event listeners
+    transactionForm.addEventListener('submit', handleTransactionSubmit);
+    typeSelect.addEventListener('change', updateCategories);
+    
+    // Set default date to today
+    document.getElementById('date').valueAsDate = new Date();
+    
+    // Initialize categories
+    updateCategories();
+});
 
-    setTimeout(() => {
-        messageDiv.remove();
-    }, 3000);
-} 
+// Export functions for use in other files
+window.transactions = {
+    saveTransaction,
+    getTransactions: () => transactions,
+    updateCategories
+}; 

@@ -64,9 +64,31 @@ function login(username, password) {
         localStorage.setItem('currentUser', JSON.stringify(currentUser));
         localStorage.setItem('isLoggedIn', 'true');
         console.log('Login successful');
+        
+        // Show success message
+        const errorMessage = document.getElementById('errorMessage');
+        if (errorMessage) {
+            errorMessage.textContent = 'Login successful! Redirecting...';
+            errorMessage.className = 'success-message';
+            errorMessage.style.display = 'block';
+        }
+        
+        // Redirect after a short delay
+        setTimeout(() => {
+            window.location.href = '../continut/index.html';
+        }, 1000);
+        
         return true;
     }
+    
     console.log('Login failed');
+    // Show error message
+    const errorMessage = document.getElementById('errorMessage');
+    if (errorMessage) {
+        errorMessage.textContent = 'Invalid username or password';
+        errorMessage.className = 'error-message';
+        errorMessage.style.display = 'block';
+    }
     return false;
 }
 
@@ -102,38 +124,45 @@ function register(name, username, password) {
     };
 }
 
-// Logout function
+// Simple logout function
 function logout() {
-    console.log('Logout function called');
-    // Clear current user
-    currentUser = null;
+    // Clear user data
     localStorage.removeItem('currentUser');
     localStorage.removeItem('isLoggedIn');
     
-    // Get the current path and base URL
-    const currentPath = window.location.pathname;
-    const baseUrl = window.location.origin;
-    console.log('Current path:', currentPath);
-    console.log('Base URL:', baseUrl);
-    
-    // Determine the correct path to login page
-    let loginPath;
-    if (currentPath.includes('/continut/')) {
-        // If we're in the continut directory, go up one level to autentificare
-        loginPath = '../autentificare/login.html';
-    } else if (currentPath.includes('/autentificare/')) {
-        // If we're already in autentificare directory, just use login.html
-        loginPath = 'login.html';
-    } else {
-        // Default case, use absolute path
-        loginPath = '/autentificare/login.html';
-    }
-    
-    console.log('Redirecting to:', loginPath);
-    
     // Redirect to login page
-    window.location.href = loginPath;
+    window.location.href = '../autentificare/login.html';
 }
+
+// Function to setup logout button
+function setupLogoutButton() {
+    // Get the logout button
+    const logoutBtn = document.getElementById('logoutButton');
+    
+    if (logoutBtn) {
+        // Remove any existing click handlers
+        logoutBtn.onclick = null;
+        
+        // Add new click handler
+        logoutBtn.onclick = function(e) {
+            e.preventDefault();
+            logout();
+        };
+        
+        console.log('Logout button setup complete');
+    } else {
+        console.error('Logout button not found');
+    }
+}
+
+// Initialize when the page loads
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('Page loaded, setting up logout button');
+    setupLogoutButton();
+});
+
+// Also try to setup after a short delay
+setTimeout(setupLogoutButton, 1000);
 
 // Check authentication on page load
 function checkAuth() {
@@ -176,53 +205,58 @@ function checkAuth() {
 function initializeAuth() {
     console.log('Initializing auth');
     
-    // Check authentication
-    checkAuth();
-    
-    // Add logout button event listener
-    const logoutButton = document.getElementById('logoutButton');
-    console.log('Looking for logout button:', logoutButton);
-    
-    if (logoutButton) {
-        console.log('Logout button found, adding event listener');
-        // Remove any existing event listeners
-        const newLogoutButton = logoutButton.cloneNode(true);
-        logoutButton.parentNode.replaceChild(newLogoutButton, logoutButton);
+    try {
+        // Check authentication
+        checkAuth();
         
-        // Add new event listener
-        newLogoutButton.addEventListener('click', function(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            console.log('Logout button clicked');
-            logout();
-        });
-    } else {
-        console.log('Logout button not found');
-    }
-    
-    // Add login form event listener if on login page
-    const loginForm = document.getElementById('loginForm');
-    if (loginForm) {
-        console.log('Login form found');
-        loginForm.addEventListener('submit', function(e) {
-            e.preventDefault();
-            const username = document.getElementById('username').value;
-            const password = document.getElementById('password').value;
-            if (login(username, password)) {
-                window.location.href = '../continut/index.html';
-            } else {
-                alert('Invalid username or password');
-            }
-        });
+        // Add logout button event listener
+        const logoutButton = document.getElementById('logoutButton');
+        console.log('Looking for logout button:', logoutButton);
+        
+        if (logoutButton) {
+            console.log('Logout button found, adding event listener');
+            
+            // Remove any existing event listeners first
+            logoutButton.removeEventListener('click', handleLogout);
+            
+            // Add new event listener with capture phase
+            logoutButton.addEventListener('click', handleLogout, true);
+            
+            // Also add a direct onclick handler as backup
+            logoutButton.onclick = handleLogout;
+            
+            console.log('Event listeners added to logout button');
+        } else {
+            console.log('Logout button not found');
+        }
+    } catch (error) {
+        console.error('Error in initializeAuth:', error);
     }
 }
 
-// Wait for DOM to be fully loaded
+// Separate function for logout button click handler
+function handleLogout(e) {
+    console.log('handleLogout called');
+    try {
+        if (e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+        logout();
+    } catch (error) {
+        console.error('Error in handleLogout:', error);
+    }
+}
+
+// Initialize auth when the page loads
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', initializeAuth);
 } else {
     initializeAuth();
 }
+
+// Also try to initialize after a short delay to ensure DOM is ready
+setTimeout(initializeAuth, 1000);
 
 // Validează criteriile de parolă
 function validatePassword(password) {
